@@ -1,28 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ModelsManager : MonoBehaviour
 {
     public List<GameObject> models;
-    private int actualModel;
+    private int actualModel = 0;
+
+    public TextMeshProUGUI actualModelText;
 
     // Start is called before the first frame update
     void Start()
     {
         //Tu bêdzie pobieranie modeli z pliku
-        models[0].SetActive(true);
-        actualModel = 0;
+
+        ShowModel();
     }
 
-    public void ShowModel(int _actual)
+    public void ShowModel()
     {
         foreach(GameObject model in models)
-        {
             model.SetActive(false);
-        }
 
-        models[_actual].SetActive(true);
+        models[actualModel].SetActive(true);
+
+        actualModelText.text = actualModel.ToString();
     }
 
     public void BackButton()
@@ -32,7 +36,7 @@ public class ModelsManager : MonoBehaviour
         else
             actualModel -= 1;
 
-        ShowModel(actualModel);
+        ShowModel();
     }
 
     public void NextButton()
@@ -42,10 +46,10 @@ public class ModelsManager : MonoBehaviour
         else
             actualModel += 1;
 
-        ShowModel(actualModel);
+        ShowModel();
     }
 
-    public void ZoomInButton(bool zoomIn)
+    public void ZoomButtons(bool zoomIn)
     {
         if(zoomIn)
             models[actualModel].transform.position = new Vector3(models[actualModel].transform.position.x, models[actualModel].transform.position.y, models[actualModel].transform.position.z - 1);
