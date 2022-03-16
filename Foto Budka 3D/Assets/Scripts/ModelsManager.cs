@@ -1,59 +1,97 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class ModelsManager : MonoBehaviour
 {
-    public List<GameObject> models;
-    private int actualModel = 0;
+    List<GameObject> listOfModels;
+    private int actualModelNumber = 0;
 
+    public GameObject UICanvas;
     public TextMeshProUGUI actualModelText;
+
+    string path;
 
     // Start is called before the first frame update
     void Start()
     {
-        //Tu bêdzie pobieranie modeli z pliku
+        LoadModel();
 
         ShowModel();
     }
 
+    public void LoadModel()
+    {
+        GameObject loadModel;
+        GameObject readyModel;
+
+        DirectoryInfo dir = new DirectoryInfo("Assets/Resources/Input");
+        FileInfo[] info = dir.GetFiles("*.obj");
+        string modelPath;
+
+
+        foreach (var e in info)
+        {
+            modelPath = "Input/" + e.Name.Remove(e.Name.Length - 4);
+            loadModel = Resources.Load(modelPath) as GameObject;
+
+            readyModel = Instantiate(loadModel);
+            readyModel.AddComponent<ModelTransform>();
+            readyModel.SetActive(false);
+
+            listOfModels.Add(Instantiate(readyModel));
+        }
+    }
+
+
+
     public void ShowModel()
     {
-        foreach(GameObject model in models)
+        foreach (GameObject model in listOfModels)
             model.SetActive(false);
 
-        models[actualModel].SetActive(true);
 
-        actualModelText.text = actualModel.ToString();
+        listOfModels[actualModelNumber].SetActive(true);
+
+        actualModelText.text = actualModelNumber.ToString();
     }
 
     public void BackButton()
     {
-        if (actualModel == 0)
-            actualModel = models.Count - 1;
+        if (actualModelNumber == 0)
+            actualModelNumber = listOfModels.Count - 1;
         else
-            actualModel -= 1;
+            actualModelNumber -= 1;
 
         ShowModel();
     }
 
     public void NextButton()
     {
-        if (actualModel == models.Count - 1)
-            actualModel = 0;
+        if (actualModelNumber == listOfModels.Count - 1)
+            actualModelNumber = 0;
         else
-            actualModel += 1;
+            actualModelNumber += 1;
 
         ShowModel();
     }
 
     public void ZoomButtons(bool zoomIn)
     {
-        if(zoomIn)
-            models[actualModel].transform.position = new Vector3(models[actualModel].transform.position.x, models[actualModel].transform.position.y, models[actualModel].transform.position.z - 1);
+        if (zoomIn)
+            listOfModels[actualModelNumber].transform.localScale += new Vector3(0.1f, 0.1f, 0.1f);
         else
-            models[actualModel].transform.position = new Vector3(models[actualModel].transform.position.x, models[actualModel].transform.position.y, models[actualModel].transform.position.z + 1);
+            listOfModels[actualModelNumber].transform.localScale -= new Vector3(0.1f, 0.1f, 0.1f);
+    }
+
+    public void ScreenshotButton()
+    {
+        path = "Assets/Screenshots/";
+        path += System.DateTime.Now.ToString("HH_mm_f");
+        path += ".png";
+
+        ScreenCapture.CaptureScreenshot(path);
     }
 }
