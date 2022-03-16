@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class ModelsManager : MonoBehaviour
 {
-    List<GameObject> listOfModels;
+    public List<GameObject> listOfModels;
     private int actualModelNumber = 0;
 
     public GameObject UICanvas;
@@ -15,11 +15,11 @@ public class ModelsManager : MonoBehaviour
     string path;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        LoadModel();
+       LoadModel();
 
-        ShowModel();
+       ShowModel();
     }
 
     public void LoadModel()
@@ -35,13 +35,14 @@ public class ModelsManager : MonoBehaviour
         foreach (var e in info)
         {
             modelPath = "Input/" + e.Name.Remove(e.Name.Length - 4);
+            loadModel =
             loadModel = Resources.Load(modelPath) as GameObject;
 
             readyModel = Instantiate(loadModel);
             readyModel.AddComponent<ModelTransform>();
             readyModel.SetActive(false);
 
-            listOfModels.Add(Instantiate(readyModel));
+            listOfModels.Add(readyModel);
         }
     }
 
@@ -49,13 +50,18 @@ public class ModelsManager : MonoBehaviour
 
     public void ShowModel()
     {
-        foreach (GameObject model in listOfModels)
-            model.SetActive(false);
+        if (listOfModels.Count != 0)
+        {
+            foreach (GameObject model in listOfModels)
+                model.SetActive(false);
 
 
-        listOfModels[actualModelNumber].SetActive(true);
+            listOfModels[actualModelNumber].SetActive(true);
 
-        actualModelText.text = actualModelNumber.ToString();
+            actualModelText.text = (actualModelNumber + 1).ToString();
+        }
+        else
+            Debug.Log("Pusta lista - brak modeli");
     }
 
     public void BackButton()
@@ -88,10 +94,13 @@ public class ModelsManager : MonoBehaviour
 
     public void ScreenshotButton()
     {
-        path = "Assets/Screenshots/";
-        path += System.DateTime.Now.ToString("HH_mm_f");
-        path += ".png";
+        var folder = Directory.CreateDirectory(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures) + "/Output");
+        //path = "Output/";
+        //path += System.DateTime.Now.ToString("HH_mm_f");
+        //path += ".png";
 
-        ScreenCapture.CaptureScreenshot(path);
+        //ScreenCapture.CaptureScreenshot(path);
+
+        ScreenCapture.CaptureScreenshot(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures) + "/Output/" + System.DateTime.Now.ToString("dd_MM_yyy HH_mm_ff") + ".png");
     }
 }
