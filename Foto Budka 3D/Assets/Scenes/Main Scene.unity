@@ -836,7 +836,7 @@ Camera:
   far clip plane: 1000
   field of view: 30
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 9.87
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1030,6 +1030,7 @@ MonoBehaviour:
   listOfModels: []
   UICanvas: {fileID: 277892773}
   actualModelText: {fileID: 1803962556}
+  cam: {fileID: 963194227}
 --- !u!4 &1142529400
 Transform:
   m_ObjectHideFlags: 0

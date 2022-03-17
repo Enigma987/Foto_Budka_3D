@@ -5,9 +5,8 @@ using UnityEngine;
 public class ModelTransform : MonoBehaviour
 {
     private Vector3 actualMousePos;
-    private Vector3 previewMousePos;
+    private Vector3 previousMousePos;
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetMouseButton(0))
@@ -17,12 +16,12 @@ public class ModelTransform : MonoBehaviour
             Move();
             
 
-        previewMousePos = Input.mousePosition;
+        previousMousePos = Input.mousePosition;
     }
 
     public void Rotate()
     {
-        actualMousePos = Input.mousePosition - previewMousePos;
+        actualMousePos = Input.mousePosition - previousMousePos;
 
         if (Vector3.Dot(transform.up, Vector3.up) >= 0)
             transform.Rotate(transform.up, -Vector3.Dot(actualMousePos, Camera.main.transform.right), Space.World);
@@ -34,7 +33,7 @@ public class ModelTransform : MonoBehaviour
 
     public void Move()
     {
-        actualMousePos = Input.mousePosition - previewMousePos;
+        actualMousePos = Input.mousePosition - previousMousePos;
 
         transform.Translate(actualMousePos * 0.01f, Space.World);
     }

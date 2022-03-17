@@ -12,16 +12,14 @@ public class ModelsManager : MonoBehaviour
     public GameObject UICanvas;
     public TextMeshProUGUI actualModelText;
 
-    string path;
-
-    // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
        LoadModel();
 
        ShowModel();
     }
 
+    //Funkcja do wczytywania modeli z folderu Assets/Resources/Input
     public void LoadModel()
     {
         GameObject loadModel;
@@ -35,26 +33,22 @@ public class ModelsManager : MonoBehaviour
         foreach (var e in info)
         {
             modelPath = "Input/" + e.Name.Remove(e.Name.Length - 4);
-            loadModel =
             loadModel = Resources.Load(modelPath) as GameObject;
 
             readyModel = Instantiate(loadModel);
             readyModel.AddComponent<ModelTransform>();
-            readyModel.SetActive(false);
 
             listOfModels.Add(readyModel);
         }
     }
 
-
-
+    //Do wyœwietlania danego modelu na ekranie
     public void ShowModel()
     {
         if (listOfModels.Count != 0)
         {
             foreach (GameObject model in listOfModels)
                 model.SetActive(false);
-
 
             listOfModels[actualModelNumber].SetActive(true);
 
@@ -63,6 +57,7 @@ public class ModelsManager : MonoBehaviour
         else
             Debug.Log("Pusta lista - brak modeli");
     }
+
 
     public void BackButton()
     {
@@ -95,12 +90,20 @@ public class ModelsManager : MonoBehaviour
     public void ScreenshotButton()
     {
         var folder = Directory.CreateDirectory(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures) + "/Output");
-        //path = "Output/";
-        //path += System.DateTime.Now.ToString("HH_mm_f");
-        //path += ".png";
 
-        //ScreenCapture.CaptureScreenshot(path);
+        StartCoroutine(TakeScreenshot());
+    }
 
-        ScreenCapture.CaptureScreenshot(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures) + "/Output/" + System.DateTime.Now.ToString("dd_MM_yyy HH_mm_ff") + ".png");
+    //Wy³¹czenie UI podczas robienia screenshotu
+    public IEnumerator TakeScreenshot()
+    {
+        yield return null;
+        UICanvas.SetActive(false);
+
+        yield return new WaitForEndOfFrame();
+
+        ScreenCapture.CaptureScreenshot(System.Environment.GetFolderPath(System.Environment.SpecialFolder.MyPictures) + "/Output/" + System.DateTime.Now.ToString("dd_MM_yyy HH_mm_ss") + ".png");
+
+        UICanvas.SetActive(true);
     }
 }
